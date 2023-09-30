@@ -1,5 +1,5 @@
 # Kairos API Node Client
-Nodejs example of a client to integrate with Kairos API
+Node.js example of a client designed for integration with the Kairos API. Please note that this code is intended solely for educational purposes and is not suitable for production use. Its primary goal is to provide you with insights into the authentication process and API interaction mechanisms, ensuring a deeper understanding of the integration workflow.
 
 ## Getting started
 This is a pretty basic Nodejs client to connect and interact with the [Kairos API](https://kairos-api.readme.io/)
