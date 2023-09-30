@@ -1,0 +1,8 @@
+node_modules
+*.log
+*.zip
+.output
+.env
+*Zone.Identifier
+.DS_Store
+.output
