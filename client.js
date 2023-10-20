@@ -79,20 +79,68 @@ async function doTokenRequest(challenge) {
     return doRequest(url, options)
 }
 
-console.log("\nKairos API usage example in Nodejs\n");
-console.log("----------------------------------\n");
-(async() => {
-    try {
-        // Perform the login
-        const login = await doLoginRequest()
-        // Decrypt the challenge
-        const challenge = decrypt(login.challenge)
-        // Ask for an access token
-        const token = await doTokenRequest(challenge)
-
-        console.log(`Here is your token: ${token.access_token}\n`);
-    }
-    catch(err) {
-        console.log(err);
+async function doTransfer(token, payload) {
+    // POST request data
+    /*const payload = {
+        "type": "outbound",
+        "internal_account_number": 300000000012078,
+        "external_account_number": "164851236789",
+        "external_account_name": "Testing Transfer",
+        "currency_code": "EUR",
+        "amount": 100,
+        "detail": "extracting funds from Kairos"
+    };*/
+  
+    const options = {
+        method: 'POST',
+        body: JSON.stringify(payload),
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`,
+        }
     };
-})()
+  
+    const url = `${baseURL}/transactions`;
+    
+    console.log(`Attempt to do transfer: ${url}\n`);
+    console.log("With payload: ", payload, "\n");
+  
+    return doRequest(url, options)
+}
+
+
+import express from 'express';
+import bodyParser from 'body-parser'
+var app = express()
+// parse application/json
+app.use(bodyParser.json())
+
+app.post('/transactions', function(request, response){
+    console.log("\nKairos API Transaction Run\n");
+    console.log("----------------------------------\n");
+    (async() => {
+        try {
+            // Perform the login
+            const login = await doLoginRequest()
+            // Decrypt the challenge
+            const challenge = decrypt(login.challenge)
+            // Ask for an access token
+            const token = await doTokenRequest(challenge)
+    
+            console.log(`Here is your token: ${token.access_token}\n`)
+    
+            const resp = await doTransfer(token.access_token, request.body)
+    
+            console.log(`Transfer result: ${JSON.stringify(resp)}\n`)
+
+            response.send(request.body);
+        }
+        catch(err) {
+            console.log(err);
+        };
+    })()
+});
+
+app.listen(8080);
+
